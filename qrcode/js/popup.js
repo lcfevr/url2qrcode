@@ -57,6 +57,24 @@ $(function () {
                     createQR($el, url, configs);
                 }
             });
+
+            $('.button[data-action=app]').on('click',function () {
+                var url = $url.val()
+                if (url) {
+                    var str = 'isOldH5=1&title=&tag='
+                    var search = url.split('?')
+                    if (search.length) {
+                       str =  '&' + str
+
+                    } else {
+                        str = '?' + str
+                    }
+
+                    url += str
+
+                    createQR($el, url, configs);
+                }
+            })
         });
     } catch (e) {
         var url = window.location.href;
@@ -70,6 +88,27 @@ $(function () {
                 createQR($el, url, defaultConfigs);
             }
         });
+
+
+        $('.button[data-action=app]').on('click',function () {
+            var url = $url.val()
+            if (url) {
+                var str = 'isOldH5=1&title=&tag='
+                var search = url.split('?')
+                if (search.length) {
+                    str =  '&' + str
+
+                } else {
+                    str = '?' + str
+                }
+
+                url += str
+
+                createQR($el, url, defaultConfigs);
+
+                $('.url').val(url)
+            }
+        })
     }
 
     function replaceUrl(url, match, ip) {
@@ -110,5 +149,27 @@ $(function () {
         var link = $('.button[data-action=save]')[0];
         link.download = 'qrcode_image.png';     // set a filename or a default
         link.href = $('.qrcode-image > canvas')[0].toDataURL();
+    }
+
+    function decode(input) {
+        return decodeURIComponent(input.replace(/\+/g, ' '));
+    }
+
+    function parse(query) {
+        var parser = /([^=?&]+)=?([^&]*)/g
+            , result = {}
+            , part;
+
+        //
+        // Little nifty parsing hack, leverage the fact that RegExp.exec increments
+        // the lastIndex property so we can continue executing this loop until we've
+        // parsed all results.
+        //
+        for (;
+            part = parser.exec(query);
+            result[decode(part[1])] = decode(part[2])
+        );
+
+        return result;
     }
 });
